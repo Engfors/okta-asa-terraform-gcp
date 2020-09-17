@@ -4,12 +4,13 @@ The following is an example of using [Terraform](https://www.terraform.io/) to d
 
 [Advanced Server Access](https://www.okta.com/products/advanced-server-access/) is an Okta application that automates identity & access across distributed Linux and Windows server fleets, extending a seamless Single Sign-On experience to SSH and RDP workflows.
 
-This code example deploys a new VPC (default: us-central1) with a public and private subnet. In the public subnet, a single Ubuntu 16.04 compute engine instance is deployed as a bastion host, and in the private subnet, N (default: 3) Ubuntu 16.04 compute engine instances are deployed. In parallel, a new Okta ASA Project is created, and select Groups are assigned. The compute engine instances spun up are enrolled with the newly created Okta ASA Project, and the target instances are configured to hop through the bastion instance.
+This code example deploys a new VPC (default: europe-north1) with one subnet. In the subnet, a single Debian 9 compute engine instance is deployed as a bastion host, and N (default: 3) Debian 9 compute engine instances. In parallel, a new Okta ASA Project is created, and select Groups are assigned. The compute engine instances spun up are enrolled with the newly created Okta ASA Project, and the target instances are configured to hop through the bastion instance.
 
 ## Prerequisites
 
 - An Okta Advanced Server Access Team
-- A GCP account 
+- A GCP service account 
+- A Terraform Cloud account
 - Terraform 0.13
 
 ## Terraform Providers
@@ -23,9 +24,9 @@ This code example deploys a new VPC (default: us-central1) with a public and pri
 
 In order to interact with the Okta ASA API, you'll need to create a Service User. Service Users are non-human accounts that are authenticated against the API. This example creates resources via API, so the Service User must belong to a Group that has Admin rights. Follow this [documentation article](https://help.okta.com/en/prod/Content/Topics/Adv_Server_Access/docs/service-users.htm) to create a Service User and an API key. You will need the API key and secret as input variables for Terraform.
 
-<!-- ### Create an user in GCP
+### Create an service account in GCP
 
-In order to create the VPC environment on GCP, you'll need an user account with full IAM rights to Compute Engine. Follow [this documentation article](https://cloud.google.com/iam/docs/quickstart) to create a user. You will need a key and secret for this user as input variables for Terraform. -->
+In order to create the VPC environment on GCP, you'll need an service account with full IAM rights to Compute Engine. Follow [this documentation article](https://cloud.google.com/iam/docs/creating-managing-service-accounts) to create a service account. You will need a key and secret for this account as input variables for Terraform.
 
 ## Input Variables
 
@@ -57,15 +58,15 @@ The version number of the Okta Advanced Server Access Server Agent (default: 1.4
 
 #### `GOOGLE_CREDENTIALS`
 
-The service account key and secret for the GCP SA to create the GCP environment. Set as Environment Variable. You must flatten the JSON (remove newlines) before pasting it into Terraform Cloud. Run `cat <key file>.json | jq -c`.
+An Environment Variable for the service account key and secret for the GCP SA to create the GCP environment. You must flatten the JSON (remove newlines) before pasting it into Terraform Cloud. Run `cat <key file>.json | jq -c`.
 
 #### `name`
 
-The Name tag value for the created resources
+The Name tag value for the created resources (default: okta-asa)
 
 #### `environment`
 
-The Environment tag value for the created resources
+The Environment tag value for the created resources (default: okta-asa-env)
 
 ### Config
 
