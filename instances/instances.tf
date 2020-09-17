@@ -1,4 +1,4 @@
-// Ubuntu 16.04 AMI
+// debian 9 image
 data "google_compute_image" "my_image" {
   family  = "debian-9"
   project = "debian-cloud"
@@ -9,7 +9,7 @@ resource "google_compute_instance" "bastion" {
   count                   = 1
   name                    = "vm-bastion-${count.index + 1}"
   machine_type            = "f1-micro"
-  metadata_startup_script = templatefile("${path.module}/userdata-scripts/ubuntu-bastion-userdata-sftd.sh", { sftd_version = var.sftd_version, enrollment_token = var.enrollment_token })
+  metadata_startup_script = templatefile("${path.module}/metadata-scripts/debian-bastion-metadata-sftd.sh", { sftd_version = var.sftd_version, enrollment_token = var.enrollment_token })
 
   boot_disk {
     initialize_params {
@@ -38,7 +38,7 @@ resource "google_compute_instance" "target" {
   count                   = var.instances
   name                    = "vm-target-${count.index + 1}"
   machine_type            = "f1-micro"
-  metadata_startup_script = templatefile("${path.module}/userdata-scripts/ubuntu-userdata-sftd.sh", { sftd_version = var.sftd_version, enrollment_token = var.enrollment_token, instance = count.index })
+  metadata_startup_script = templatefile("${path.module}/metadata-scripts/debian-metadata-sftd.sh", { sftd_version = var.sftd_version, enrollment_token = var.enrollment_token, instance = count.index })
 
   boot_disk {
     initialize_params {
